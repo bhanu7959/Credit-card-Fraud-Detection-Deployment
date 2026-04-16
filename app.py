@@ -229,43 +229,6 @@ if uploaded_file is not None:
             st.stop()
 
         # -----------------------------
-        # Metrics
-        # -----------------------------
-        total_transactions = len(result_df)
-        fraud_transactions = int(result_df["Prediction"].sum())
-        non_fraud_transactions = total_transactions - fraud_transactions
-        avg_fraud_prob = float(result_df["Fraud_Probability"].mean())
-        max_fraud_prob = float(result_df["Fraud_Probability"].max())
-
-        st.subheader("📊 Fraud Summary Metrics")
-        col1, col2, col3, col4 = st.columns(4)
-        col1.metric("Total Transactions", total_transactions)
-        col2.metric("Fraud Detected", fraud_transactions)
-        col3.metric("Non-Fraud", non_fraud_transactions)
-        col4.metric("Average Fraud Probability", f"{avg_fraud_prob:.4f}")
-
-        # -----------------------------
-        # Alerts
-        # -----------------------------
-        if fraud_transactions == 0:
-            st.success("✅ No transactions crossed the selected fraud threshold.")
-        else:
-            fraud_rate = fraud_transactions / total_transactions
-            if fraud_rate >= 0.20 or max_fraud_prob >= 0.95:
-                st.error(
-                    f"🚨 High Fraud Risk Alert: {fraud_transactions} transactions flagged. "
-                    f"Highest fraud probability = {max_fraud_prob:.4f}"
-                )
-            elif fraud_rate >= 0.05:
-                st.warning(
-                    f"⚠️ Moderate Fraud Risk Alert: {fraud_transactions} suspicious transactions detected."
-                )
-            else:
-                st.info(
-                    f"🔎 Low-to-Moderate Risk: {fraud_transactions} suspicious transactions detected."
-                )
-
-        # -----------------------------
         # Confusion Matrix + Performance
         # -----------------------------
         if "Class" in result_df.columns:
