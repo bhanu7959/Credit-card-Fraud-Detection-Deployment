@@ -90,8 +90,9 @@ threshold = st.sidebar.slider(
 
 st.sidebar.markdown("---")
 st.sidebar.info(
-    "Higher threshold = fewer fraud alerts.\n\n"
-    "Lower threshold = more sensitive fraud detection."
+    "Higher threshold = fewer fraud alerts but may miss fraud.\n\n"
+    "Lower threshold = more sensitive detection but may increase false alarms.\n\n"
+    "⚠️ In fraud detection, lower threshold is often preferred to reduce missed fraud."
 )
 
 # -----------------------------
