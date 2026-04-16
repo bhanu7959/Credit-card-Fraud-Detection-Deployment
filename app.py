@@ -15,7 +15,6 @@ import json
 import matplotlib.pyplot as plt
 from sklearn.metrics import (
     confusion_matrix,
-    ConfusionMatrixDisplay,
     accuracy_score,
     precision_score,
     recall_score,
@@ -135,6 +134,39 @@ def risk_label(prob):
         return "Medium"
     return "Low"
 
+def plot_confusion_matrix_exact(cm):
+    fig, ax = plt.subplots(figsize=(6, 5))
+
+    im = ax.imshow(cm)
+
+    ax.set_xticks([0, 1])
+    ax.set_yticks([0, 1])
+    ax.set_xticklabels(["Non-Fraud", "Fraud"])
+    ax.set_yticklabels(["Non-Fraud", "Fraud"])
+
+    ax.set_xlabel("Predicted Label")
+    ax.set_ylabel("True Label")
+    ax.set_title("Confusion Matrix")
+
+    threshold_value = cm.max() / 2 if cm.max() > 0 else 0
+
+    for i in range(cm.shape[0]):
+        for j in range(cm.shape[1]):
+            ax.text(
+                j,
+                i,
+                f"{cm[i, j]}",
+                ha="center",
+                va="center",
+                color="white" if cm[i, j] > threshold_value else "black",
+                fontsize=14,
+                fontweight="bold"
+            )
+
+    fig.colorbar(im)
+    plt.tight_layout()
+    return fig
+
 # -----------------------------
 # File upload
 # -----------------------------
@@ -253,19 +285,13 @@ if uploaded_file is not None:
                         st.subheader("🧩 Confusion Matrix")
 
                         cm = confusion_matrix(y_true, y_pred, labels=[0, 1])
-
-                        fig, ax = plt.subplots()
-                        disp = ConfusionMatrixDisplay(
-                            confusion_matrix=cm,
-                            display_labels=["Non-Fraud", "Fraud"]
-                        )
-                        disp.plot(ax=ax)
+                        fig = plot_confusion_matrix_exact(cm)
                         st.pyplot(fig)
 
                         tn, fp, fn, tp = cm.ravel()
 
                         st.write("### 🔍 Interpretation")
-                        st.write(f"""
+                        st.markdown(f"""
 - **True Negatives (TN):** {tn} → Correctly identified non-fraud transactions
 - **False Positives (FP):** {fp} → Normal transactions incorrectly flagged as fraud
 - **False Negatives (FN):** {fn} → Fraud transactions missed by the model
